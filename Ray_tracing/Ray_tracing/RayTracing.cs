@@ -13,9 +13,10 @@ namespace Ray_tracing
 {
     class RayTracing
     {
-        //Vector3 cameraPosition = new Vector3(2, 3, 4);
-        Vector3 cameraDirection = new Vector3(0, 0, 0);
-        Vector3 cameraUp = new Vector3(0, 1, 0);
+        Vector3 campos = new Vector3(-0.3f, 0.0f, 1.0f);
+        Vector3 cameraPosition = new Vector3(-0.3f, -0.0f, 1.0f);
+        Vector3 cameraDirection = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 cameraUp = new Vector3(0.0f, 1.0f, 0.0f);
 
         string glVersion;
         string glslVersion;
@@ -24,11 +25,8 @@ namespace Ray_tracing
         int BasicVertexShader;
         int BasicFragmentShader;
 
-        //int vaoHandle;
-
         //Vector3[] vertdata = new Vector3[] { new Vector3(-1f, -1f, 0f), new Vector3(1f, -1f, 0f), new Vector3(1f, 1f, 0), new Vector3(-1f, 1f, 0f) };
         float[] vertdata = { -1f, -1f, 0.0f, -1f, 1f, 0.0f, 1f, -1f, 0.0f, 1f, 1f, 0f };
-        Vector3 campos = new Vector3(0f, 0f, 0.8f);
 
         int width;
         int height;
@@ -55,6 +53,7 @@ namespace Ray_tracing
             GL.Uniform3(GL.GetUniformLocation(BasicProgramID, "campos"), campos);
             GL.Uniform1(GL.GetUniformLocation(BasicProgramID, "aspect"), (float)width / (float)height);
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
+            //GL.DrawArrays(PrimitiveType.Quads, 0, 4);
             GL.UseProgram(0);
         }
 
@@ -66,7 +65,7 @@ namespace Ray_tracing
         public void Update()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            Matrix4 viewMat = Matrix4.LookAt(campos, cameraDirection, cameraUp);
+            Matrix4 viewMat = Matrix4.LookAt(cameraPosition, cameraDirection, cameraUp);
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadMatrix(ref viewMat);
 
@@ -115,6 +114,21 @@ namespace Ray_tracing
         public void DisableShaders()
         {
             GL.DeleteProgram(BasicProgramID);
+        }
+
+        public void ChangeX(float step)
+        {
+            campos += new Vector3(step, 0, 0);
+        }
+
+        public void ChangeY(float step)
+        {
+            campos += new Vector3(0, step, 0);
+        }
+
+        public void ChangeZ(float step)
+        {
+            campos += new Vector3(0, 0, step);
         }
     }
 }

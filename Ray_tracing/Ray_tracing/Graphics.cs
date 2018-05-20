@@ -73,8 +73,8 @@ namespace Ray_tracing
         {
             // создание объекта программы
             BasicProgramID = GL.CreateProgram();
-            loadShader("..\\..\\basic.vs.txt", ShaderType.VertexShader, BasicProgramID, out BasicVertexShader);
-            loadShader("..\\..\\basic.fs.txt", ShaderType.FragmentShader, BasicProgramID, out BasicFragmentShader);
+            loadShader("..\\..\\vertex.txt", ShaderType.VertexShader, BasicProgramID, out BasicVertexShader);
+            loadShader("..\\..\\frag.txt", ShaderType.FragmentShader, BasicProgramID, out BasicFragmentShader);
             //Компановка программы
             GL.LinkProgram(BasicProgramID);
             // Проверить успех компановки

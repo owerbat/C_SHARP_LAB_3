@@ -29,11 +29,14 @@ struct HitInfo
     vec3 hitPoint;
     vec3 surfaceNormal;
     float distance;
+	vec3 color;
 };
 
 const int Max_Depth = 5;
 const int Max_Nodes = 64;
 RayNode rayNode[Max_Nodes];
+const int sphereCount = 3;
+Sphere spheres[sphereCount];
 
 void sphereIntersect(Ray ray, Sphere sphere, inout HitInfo hitInfo)
 {
@@ -52,6 +55,7 @@ void sphereIntersect(Ray ray, Sphere sphere, inout HitInfo hitInfo)
 			hitInfo.hitPoint = ray.origin + ray.direction *  hitInfo.distance;
   			hitInfo.surfaceNormal = normalize(hitInfo.hitPoint - sphere.position);
 			hitInfo.hitDetected = true;
+			hitInfo.color = sphere.color;
 		}
 	}
 }
@@ -59,9 +63,20 @@ void sphereIntersect(Ray ray, Sphere sphere, inout HitInfo hitInfo)
 vec3 iterativeRayTrace(Ray ray)
 {
 	Sphere sphere;
-	sphere.position = vec3(-0.4, 0.0, -0.2);
+	sphere.position = vec3(0.0, 0.0, 0.0);
 	sphere.radius = 0.5;
-	sphere.color = vec3(0.9, 0.5, 0.7);
+	sphere.color = vec3(0.9, 0.3, 0.0);
+	spheres[0] = sphere;
+
+	sphere.position = vec3(-1.5, 0.0, 0.0);
+	sphere.radius = 0.2;
+	sphere.color = vec3(0.0, 0.3, 0.7);
+	spheres[1] = sphere;
+
+	sphere.position = vec3(-0.6, 0.3, 0.0);
+	sphere.radius = 0.3;
+	sphere.color = vec3(0.5, 0.8, 0.4);
+	spheres[2] = sphere;
 
 	int numberOfNodes = 1, currentNodeIndex = 0;
 
@@ -72,11 +87,15 @@ vec3 iterativeRayTrace(Ray ray)
 	{
 		HitInfo hitInfo;
 		hitInfo.hitDetected = false;
-		sphereIntersect(ray, sphere, hitInfo);
+		sphereIntersect(ray, spheres[0], hitInfo);
+		sphereIntersect(ray, spheres[1], hitInfo);
+		sphereIntersect(ray, spheres[2], hitInfo);
 
 		if(hitInfo.hitDetected)
 		{
-			rayNode[currentNodeIndex].color = sphere.color;
+			float coeff = (dot(ray.direction, hitInfo.surfaceNormal) * dot(ray.direction, hitInfo.surfaceNormal)) / (dot(ray.direction, ray.direction) * dot(hitInfo.surfaceNormal, hitInfo.surfaceNormal));
+			
+			rayNode[currentNodeIndex].color = hitInfo.color * coeff;
 		}
 		else
 		{
