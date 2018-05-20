@@ -2,6 +2,7 @@
 
 uniform float aspect;
 uniform vec3 campos;
+
 in vec3 vPosition;
 
 out vec3 origin, direction;

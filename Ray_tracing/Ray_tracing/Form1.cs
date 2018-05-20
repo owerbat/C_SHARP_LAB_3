@@ -30,5 +30,15 @@ namespace Ray_tracing
             //gr.DisableShaders();
             rt.DisableShaders();
         }
+
+        private void glControl1_Load(object sender, EventArgs e)
+        {
+                rt.SetSize(glControl1.Width, glControl1.Height);
+        }
+
+        private void Application_Idle(object sender, PaintEventArgs e)
+        {
+            glControl1_Paint(sender, e);
+        }
     }
 }
