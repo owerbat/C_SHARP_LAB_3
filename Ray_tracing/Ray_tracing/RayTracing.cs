@@ -13,10 +13,9 @@ namespace Ray_tracing
 {
     class RayTracing
     {
-        Vector3 campos = new Vector3(-2.5f, 1.0f, 1.2f);
-        public Vector3 camdir = new Vector3(0.6f, 3.0f, -0.3f);
-        //public Vector3 camdir = new Vector3(0.1f, -0.1f, -1.0f);
-        //vec3(vPosition.x * aspect, vPosition.y, -1.0)
+        Vector3 campos = new Vector3(0.0f, 0.0f, 0.8f);
+        //public Vector3 camdir = new Vector3(0.6f, 3.0f, -0.3f);
+        public Vector3 camdir = new Vector3(0f, 0f, 0.1f);
 
         Vector3 cameraPosition = new Vector3(-0.3f, -0.0f, 1.0f);
         Vector3 cameraDirection = new Vector3(0.0f, 0.0f, 0.0f);

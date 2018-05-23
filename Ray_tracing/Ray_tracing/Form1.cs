@@ -58,7 +58,7 @@ namespace Ray_tracing
                 case Keys.D3: rt.ChangeDirZ(0.1f); break;
                 case Keys.D4: rt.ChangeDirZ(-0.1f); break;
             }
-            label1.Text = Convert.ToString(rt.camdir);
+            //label1.Text = Convert.ToString(rt.camdir);
         }
 
         private void Form1_Load(object sender, EventArgs e)
