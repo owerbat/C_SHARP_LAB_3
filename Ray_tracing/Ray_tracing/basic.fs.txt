@@ -51,8 +51,8 @@ struct HitInfo
 {
 	bool hitDetected;
     vec3 hitPoint;
-    vec3 surfaceNormal;
-    float distance;
+	vec3 surfaceNormal;
+	float distance;
 	//vec3 color;
 	Material material;
 	int objectid;            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -62,7 +62,7 @@ struct HitInfo
 const int Max_Depth = 5;
 const int Max_Nodes = 64;
 RayNode rayNode[Max_Nodes];
-const int sphereCount = 3;
+const int sphereCount = 4;
 Sphere spheres[sphereCount];
 const int TYPE_DIFFUSE = 1;
 const int TYPE_SHADOW = 2;
@@ -158,7 +158,8 @@ vec3 phongShading(Material material, Material lightMaterial, vec3 hitPoint, vec3
 	float diffuseCoef = max(0.0, dot(surfaceNormal, lightDir));
 	float specularCoef = pow(dot(eyeDir, reflectDir), material.shiness);
 
-	return material.ambient * lightMaterial.ambient + (material.diffuse * lightMaterial.emission * diffuseCoef + material.specular * lightMaterial.emission * specularCoef) * attenuation;
+	return material.ambient * lightMaterial.ambient + (material.diffuse * lightMaterial.emission * diffuseCoef + 
+	material.specular * lightMaterial.emission * specularCoef) * attenuation;
 }
 
 vec3 calculateColor(HitInfo hitInfo)
@@ -206,7 +207,7 @@ vec3 calculateColor(HitInfo hitInfo)
 				vec3 eyeDir = normalize(origin - hitPoint);
 				vec3 reflectDir = vec3(0);
 				if(dot(surfaceNormal, lightDir) > 0.0)
-				reflectDir = normalize(reflect(surfaceNormal, -lightDir));
+					reflectDir = normalize(reflect(surfaceNormal, -lightDir));
 
 				currentColor += phongShading(material, lightMaterial, hitPoint, surfaceNormal, lightDir, reflectDir, eyeDir, distance) * transparency;
 			}
@@ -215,8 +216,7 @@ vec3 calculateColor(HitInfo hitInfo)
 				currentColor += lightMaterial.ambient * material.ambient;
 			}
 			resultColor += currentColor;
-		}
-		
+		}		
 	}
 
 	return resultColor;
@@ -225,51 +225,82 @@ vec3 calculateColor(HitInfo hitInfo)
 vec3 iterativeRayTrace(Ray ray)
 {
 	Material gold;
-	gold.ambient = vec3(0.25, 0.2, 0.07);
-	gold.diffuse = vec3(0.75, 0.6, 0.23);
+	gold.ambient = vec3(0.0, 1.0, 1.0);
+	gold.diffuse = vec3(0.0, 0.0, 0.0);
 	gold.reflection = vec3(0.63, 0.56, 0.37);
 	gold.specular = vec3(1.0, 1.0, 1.0);
 	gold.transparency = vec3(0.0, 0.0, 0.0);
-	gold.emission = vec3(0.0, 0.0, 0.0);
+	gold.emission = vec3(0.0, 1.0, 0.2);
 	gold.atenuation = vec3(1.0, 1.0, 6.0);
 	gold.refractionCoef = 0.0;
 	gold.shiness = 150;
 
-	/*gold.ambient = vec3(1.0, 1.0, 1.0);
-	gold.diffuse = vec3(1.0, 1.0, 1.0);
-	gold.reflection = vec3(1.0, 1.0, 1.0);
-	gold.specular = vec3(1.0, 1.0, 1.0);
-	gold.transparency = vec3(0.0, 0.0, 0.0);
-	gold.emission = vec3(0.0, 0.0, 0.0);
-	gold.atenuation = vec3(1.0, 1.0, 6.0);
-	gold.refractionCoef = 0.0;
-	gold.shiness = 150;*/
+	Material new;
+	new.ambient = vec3(0.0, 5.0, 0.0);
+	new.diffuse = vec3(0.0, 0.0, 0.0);
+	new.reflection = vec3(0.63, 0.56, 0.2);
+	new.specular = vec3(1.0, 1.0, 1.0);
+	new.transparency = vec3(0.0, 0.0, 0.0);
+	new.emission = vec3(1.0, 0.0, 0.0);
+	new.atenuation = vec3(1.0, 1.0, 6.0);
+	new.refractionCoef = 0.0;
+	new.shiness = 150;
+
+	Material chrome;
+	chrome.ambient = vec3(0.25, 0.25, 0.25);
+	chrome.diffuse = vec3(0.0, 0.0, 0.0);
+	chrome.reflection = vec3(0.63, 0.56, 0.2);
+	chrome.specular = vec3(0.774597, 0.774597, 0.774597);
+	chrome.transparency = vec3(0.0, 0.0, 0.0);
+	chrome.emission = vec3(0.0, 0.0, 1.0);
+	chrome.atenuation = vec3(1.0, 1.0, 6.0);
+	chrome.refractionCoef = 0.0;
+	chrome.shiness = 150;
+
+	Material lantern;
+	lantern.ambient = vec3(0.0, 0.0, 0.0);
+	lantern.diffuse = vec3(1.0, 1.0, 1.0);
+	lantern.reflection = vec3(1.0, 1.0, 1.0);
+	lantern.specular = vec3(1000.0, 1000.0, 1000.0);
+	lantern.transparency = vec3(0.0, 0.0, 0.0);
+	lantern.emission = vec3(0.0, 0.0, 0.0);
+	lantern.atenuation = vec3(1.0, 1.0, 1.0);
+	lantern.refractionCoef = 0.0;
+	lantern.shiness = 150;
 
 
 	Sphere sphere;
 	sphere.position = vec3(0.0, 0.0, 0.0);
 	sphere.radius = 0.5;
 	//sphere.color = vec3(0.9, 0.3, 0.0);
-	sphere.material = gold;
+	sphere.material = lantern;
 	sphere.objectid = 0;
 	sphere.objectType = TYPE_SPHERE;
 	spheres[0] = sphere;
 
-	sphere.position = vec3(-1.5, 0.0, 0.0);
+	sphere.position = vec3(-1.0, -0.8, 0.1);
 	sphere.radius = 0.2;
 	//sphere.color = vec3(0.0, 0.3, 0.7);
-	sphere.material = gold;
+	sphere.material = chrome;
 	sphere.objectid = 1;
 	sphere.objectType = TYPE_SPHERE;
 	spheres[1] = sphere;
 
-	sphere.position = vec3(-0.6, 0.3, 0.0);
+	sphere.position = vec3(1.0, 0.0, 0.2);
 	sphere.radius = 0.3;
 	//sphere.color = vec3(0.5, 0.8, 0.4);
 	sphere.material = gold;
 	sphere.objectid = 2;
 	sphere.objectType = TYPE_SPHERE;
 	spheres[2] = sphere;
+
+	sphere.position = vec3(0.0, -1.0, 0.2);
+	sphere.radius = 0.2;
+	//sphere.color = vec3(0.5, 0.8, 0.4);
+	sphere.material = new;
+	sphere.objectid = 3;
+	sphere.objectType = TYPE_SPHERE;
+	spheres[3] = sphere;
 
 	int numberOfNodes = 1, currentNodeIndex = 0;
 
@@ -279,7 +310,7 @@ vec3 iterativeRayTrace(Ray ray)
 	while(currentNodeIndex < numberOfNodes)
 	{
 		rayNode[currentNodeIndex].diffuseColor = vec3(0);
-		rayNode[currentNodeIndex].reflectionColor = vec3(0);
+		rayNode[currentNodeIndex].reflectionColor = vec3(0.0);
 		rayNode[currentNodeIndex].refractionColor = vec3(0);
 
 		HitInfo hitInfo;

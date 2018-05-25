@@ -13,7 +13,7 @@ namespace Ray_tracing
 {
     class RayTracing
     {
-        Vector3 campos = new Vector3(0.0f, 0.0f, 0.8f);
+        Vector3 campos = new Vector3(-0.0f, 0.0f, 1.2f);
         //public Vector3 camdir = new Vector3(0.6f, 3.0f, -0.3f);
         public Vector3 camdir = new Vector3(0f, 0f, 0.1f);
 
@@ -100,6 +100,7 @@ namespace Ray_tracing
             BasicProgramID = GL.CreateProgram();
             loadShader("..\\..\\basic.vs.txt", ShaderType.VertexShader, BasicProgramID, out BasicVertexShader);
             loadShader("..\\..\\basic.fs.txt", ShaderType.FragmentShader, BasicProgramID, out BasicFragmentShader);
+            //loadShader("..\\..\\raytracing_fragnew.txt", ShaderType.FragmentShader, BasicProgramID, out BasicFragmentShader);
             //Компановка программы
             GL.LinkProgram(BasicProgramID);
             // Проверить успех компановки
