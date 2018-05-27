@@ -13,9 +13,9 @@ namespace Ray_tracing
 {
     class RayTracing
     {
-        Vector3 campos = new Vector3(-0.0f, 0.0f, 1.2f);
+        Vector3 campos = new Vector3(0.0f, -0.1f, 1.5f);
         //public Vector3 camdir = new Vector3(0.6f, 3.0f, -0.3f);
-        public Vector3 camdir = new Vector3(0f, 0f, 0.1f);
+        public Vector3 camdir = new Vector3(0.1f, 0.1f, 0.1f);
 
         Vector3 cameraPosition = new Vector3(-0.3f, -0.0f, 1.0f);
         Vector3 cameraDirection = new Vector3(0.0f, 0.0f, 0.0f);
@@ -138,47 +138,47 @@ namespace Ray_tracing
 
         public void ChangeDirX(float step)
         {
-            //camdir += new Vector3(step, 0, 0);
+            camdir += new Vector3(step, 0, 0);
             /*if (step >= 0)
                 camdir = new Vector3(1.0f, 0, 0);
             else
                 camdir = new Vector3(-1.0f, 0, 0);*/
             //fi += step;
 
-            Matrix3 turn = new Matrix3(new Vector3(1.0f, 0.0f                 , 0.0f),
+            /*Matrix3 turn = new Matrix3(new Vector3(1.0f, 0.0f                 , 0.0f),
                                        new Vector3(0.0f, (float)Math.Cos(step), -1.0f * (float)Math.Sin(step)),
                                        new Vector3(0.0f, (float)Math.Sin(step), (float)Math.Cos(step)));
-            camdir = Multiply(turn, camdir);
+            camdir = Multiply(turn, camdir);*/
         }
 
         public void ChangeDirY(float step)
         {
-            //camdir += new Vector3(0, step, 0);
+            camdir += new Vector3(0, step, 0);
             /*if (step >= 0)
                 camdir = new Vector3(0, 1.0f, 0);
             else
                 camdir = new Vector3(0, -1.0f, 0);*/
             //psi += step;
 
-            Matrix3 turn = new Matrix3(new Vector3((float)Math.Cos(step)        , 0.0f, (float)Math.Sin(step)),
+            /*Matrix3 turn = new Matrix3(new Vector3((float)Math.Cos(step)        , 0.0f, (float)Math.Sin(step)),
                                        new Vector3(0.0f                         , 0.1f, 0.0f),
                                        new Vector3(-1.0f * (float)Math.Sin(step), 0.0f, (float)Math.Cos(step)));
-            camdir = Multiply(turn, camdir);
+            camdir = Multiply(turn, camdir);*/
         }
 
         public void ChangeDirZ(float step)
         {
-            //camdir += new Vector3(0, 0, step);
+            camdir += new Vector3(0, 0, step);
             /*if (step >= 0)
                 camdir = new Vector3(0, 0, 1.0f);
             else
                 camdir = new Vector3(0, 0, -1.0f);*/
             //ro += step;
 
-            Matrix3 turn = new Matrix3(new Vector3((float)Math.Cos(step), -1.0f * (float)Math.Sin(step), 0.0f),
+            /*Matrix3 turn = new Matrix3(new Vector3((float)Math.Cos(step), -1.0f * (float)Math.Sin(step), 0.0f),
                                        new Vector3((float)Math.Sin(step), (float)Math.Cos(step)        , 0.0f),
                                        new Vector3(0.0f                 , 0.0f                         , 1.0f));
-            camdir = Multiply(turn, camdir);
+            camdir = Multiply(turn, camdir);*/
         }
 
         public Vector3 Multiply(Matrix3 matrix, Vector3 vector)

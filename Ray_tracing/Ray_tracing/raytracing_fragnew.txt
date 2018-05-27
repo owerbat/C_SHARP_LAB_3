@@ -62,7 +62,7 @@ struct HitInfo
 const int Max_Depth = 5;
 const int Max_Nodes = 64;
 RayNode rayNode[Max_Nodes];
-const int sphereCount = 5;
+const int sphereCount = 3;
 Sphere spheres[sphereCount];
 const int TYPE_DIFFUSE = 1;
 const int TYPE_SHADOW = 2;
@@ -154,7 +154,7 @@ bool isShadowed(vec3 hitPoint, int lightIndex, int lightType, inout vec3 transpa
 vec3 phongShading(Material material, Material lightMaterial, vec3 hitPoint, vec3 surfaceNormal, vec3 lightDir, vec3 reflectDir, vec3 eyeDir, float distance)
 {
 	float attenuation = 1.0 / (1.0 + lightMaterial.atenuation.x + distance * lightMaterial.atenuation.y + distance * distance * lightMaterial.atenuation.z);
-	
+
 	float diffuseCoef = max(0.0, dot(surfaceNormal, lightDir));
 	float specularCoef = pow(dot(eyeDir, reflectDir), material.shiness);
 
@@ -162,7 +162,7 @@ vec3 phongShading(Material material, Material lightMaterial, vec3 hitPoint, vec3
 	material.specular * lightMaterial.emission * specularCoef) * attenuation;
 }
 
-vec3 calculateColor(HitInfo hitInfo, Ray ray)
+vec3 calculateColor(HitInfo hitInfo)
 {
 	Material material;
 	if(hitInfo.objectType == TYPE_SPHERE)
@@ -171,15 +171,8 @@ vec3 calculateColor(HitInfo hitInfo, Ray ray)
 	vec3 hitPoint = hitInfo.hitPoint;
 	vec3 surfaceNormal = hitInfo.surfaceNormal;
 
-	float coeff = 2.5 * (dot(ray.direction, hitInfo.surfaceNormal) * dot(ray.direction, hitInfo.surfaceNormal)) / 
-	(dot(ray.direction, ray.direction) * dot(hitInfo.surfaceNormal, hitInfo.surfaceNormal));
-
 	if(length(material.emission) > 0.0)
-	{
-		return (material.emission + material.diffuse);
-		//return (material.emission + material.diffuse) * coeff;
-	}
-
+		return material.emission + material.diffuse;
 	vec3 resultColor = vec3(0);
 
 	for(int i = 0; i < sphereCount; i++) 
@@ -214,7 +207,7 @@ vec3 calculateColor(HitInfo hitInfo, Ray ray)
 				vec3 eyeDir = normalize(origin - hitPoint);
 				vec3 reflectDir = vec3(0);
 				if(dot(surfaceNormal, lightDir) > 0.0)
-					reflectDir = normalize(reflect(surfaceNormal, -lightDir));
+				reflectDir = normalize(reflect(surfaceNormal, -lightDir));
 
 				currentColor += phongShading(material, lightMaterial, hitPoint, surfaceNormal, lightDir, reflectDir, eyeDir, distance) * transparency;
 			}
@@ -223,7 +216,7 @@ vec3 calculateColor(HitInfo hitInfo, Ray ray)
 				currentColor += lightMaterial.ambient * material.ambient;
 			}
 			resultColor += currentColor;
-		}		
+		}
 	}
 
 	return resultColor;
@@ -232,100 +225,62 @@ vec3 calculateColor(HitInfo hitInfo, Ray ray)
 vec3 iterativeRayTrace(Ray ray)
 {
 	Material gold;
-	gold.ambient = vec3(0.0, 1.0, 0.0);
-	gold.diffuse = vec3(0.1, 0.5, 0.1);
-	gold.reflection = vec3(0.63, 0.4, 0.37);
+	gold.ambient = vec3(0.25, 0.2, 0.07);
+	gold.diffuse = vec3(0.75, 0.6, 0.23);
+	gold.reflection = vec3(0.63, 0.56, 0.37);
 	gold.specular = vec3(1.0, 1.0, 1.0);
 	gold.transparency = vec3(0.0, 0.0, 0.0);
-	gold.emission = vec3(0.0, 1.0, 0.0);
+	gold.emission = vec3(0.0, 0.0, 0.0);
 	gold.atenuation = vec3(1.0, 1.0, 6.0);
 	gold.refractionCoef = 0.0;
 	gold.shiness = 150;
 
 	Material new;
-	new.ambient = vec3(1.0, 0.0, 0.0);
-	new.diffuse = vec3(0.0, 0.0, 0.0);
+	new.ambient = vec3(0.5, 0.7, 0.1);
+	new.diffuse = vec3(0.0, 0.5, 0.23);
 	new.reflection = vec3(0.63, 0.56, 0.2);
 	new.specular = vec3(1.0, 1.0, 1.0);
 	new.transparency = vec3(0.0, 0.0, 0.0);
-	new.emission = vec3(1.0, 0.0, 0.0);
+	new.emission = vec3(0.8, 0.3, 0.2);
 	new.atenuation = vec3(1.0, 1.0, 6.0);
 	new.refractionCoef = 0.0;
 	new.shiness = 150;
 
-	Material chrome;
-	chrome.ambient = vec3(0.0, 0.0, 1.0);
-	chrome.diffuse = vec3(0.0, 0.0, 0.0);
-	chrome.reflection = vec3(0.63, 0.56, 0.2);
-	chrome.specular = vec3(0.774597, 0.774597, 0.774597);
-	chrome.transparency = vec3(0.0, 0.0, 0.0);
-	chrome.emission = vec3(0.0, 0.0, 1.0);
-	chrome.atenuation = vec3(1.0, 1.0, 6.0);
-	chrome.refractionCoef = 0.0;
-	chrome.shiness = 150;
-
-	Material lantern;
-	lantern.ambient = vec3(0.0, 0.0, 0.0);
-	lantern.diffuse = vec3(1.0, 1.0, 1.0);
-	lantern.reflection = vec3(1.0, 1.0, 1.0);
-	lantern.specular = vec3(10.0, 10.0, 10.0);
-	lantern.transparency = vec3(0.0, 0.0, 0.0);
-	lantern.emission = vec3(0.0, 0.0, 0.0);
-	lantern.atenuation = vec3(1.0, 1.0, 1.0);
-	lantern.refractionCoef = 0.0;
-	lantern.shiness = 150;
-
-	Material wall;
-	wall.ambient = vec3(0.25, 0.0, 0.9);
-	wall.diffuse = vec3(0.6, 0.6, 0.9);
-	wall.reflection = vec3(0.5, 1.0, 0.8);
-	wall.specular = vec3(0.7, 0.3, 0.1);
-	wall.transparency = vec3(0.1, 0.2, 0.1);
-	wall.emission = vec3(0.0, 0.0, 0.0);
-	wall.atenuation = vec3(1.0, 1.0, 6.0);
-	wall.refractionCoef = 0.7;
-	wall.shiness = 100;
+	/*gold.ambient = vec3(1.0, 1.0, 1.0);
+	gold.diffuse = vec3(1.0, 1.0, 1.0);
+	gold.reflection = vec3(1.0, 1.0, 1.0);
+	gold.specular = vec3(1.0, 1.0, 1.0);
+	gold.transparency = vec3(0.0, 0.0, 0.0);
+	gold.emission = vec3(0.0, 0.0, 0.0);
+	gold.atenuation = vec3(1.0, 1.0, 6.0);
+	gold.refractionCoef = 0.0;
+	gold.shiness = 150;*/
 
 
 	Sphere sphere;
 	sphere.position = vec3(0.0, 0.0, 0.0);
 	sphere.radius = 0.5;
 	//sphere.color = vec3(0.9, 0.3, 0.0);
-	sphere.material = lantern;
+	sphere.material = new;
 	sphere.objectid = 0;
 	sphere.objectType = TYPE_SPHERE;
 	spheres[0] = sphere;
 
-	sphere.position = vec3(-1.0, -0.8, 0.1);
+	sphere.position = vec3(-1.5, 0.0, 0.0);
 	sphere.radius = 0.2;
 	//sphere.color = vec3(0.0, 0.3, 0.7);
-	sphere.material = chrome;
+	sphere.material = gold;
 	sphere.objectid = 1;
 	sphere.objectType = TYPE_SPHERE;
 	spheres[1] = sphere;
 
-	sphere.position = vec3(1.0, 0.0, 0.2);
+	sphere.position = vec3(-0.6, 0.3, 0.0);
 	sphere.radius = 0.3;
 	//sphere.color = vec3(0.5, 0.8, 0.4);
 	sphere.material = gold;
 	sphere.objectid = 2;
 	sphere.objectType = TYPE_SPHERE;
 	spheres[2] = sphere;
-
-	sphere.position = vec3(-0.7, 0.8, 0.3);
-	sphere.radius = 0.2;
-	//sphere.color = vec3(0.5, 0.8, 0.4);
-	sphere.material = new;
-	sphere.objectid = 3;
-	sphere.objectType = TYPE_SPHERE;
-	spheres[3] = sphere;
-
-	sphere.position = vec3(0.3, -0.5, 0.3);
-	sphere.radius = 0.1;
-	sphere.material = wall;
-	sphere.objectid = 4;
-	sphere.objectType = TYPE_SPHERE;
-	spheres[4] = sphere;
 
 	int numberOfNodes = 1, currentNodeIndex = 0;
 
@@ -335,19 +290,22 @@ vec3 iterativeRayTrace(Ray ray)
 	while(currentNodeIndex < numberOfNodes)
 	{
 		rayNode[currentNodeIndex].diffuseColor = vec3(0);
-		rayNode[currentNodeIndex].reflectionColor = vec3(0.0);
+		rayNode[currentNodeIndex].reflectionColor = vec3(0);
 		rayNode[currentNodeIndex].refractionColor = vec3(0);
 
 		HitInfo hitInfo;
 		hitInfo.hitDetected = false;
 
+		//sphereIntersect(ray, spheres[0], hitInfo);
+		//sphereIntersect(ray, spheres[1], hitInfo);
+		//sphereIntersect(ray, spheres[2], hitInfo);
 		for(int i = 0; i < sphereCount; i++)
 			sphereIntersect(ray, spheres[i], hitInfo);
 
 		if(hitInfo.hitDetected)
 		{
 			//float coeff = (dot(ray.direction, hitInfo.surfaceNormal) * dot(ray.direction, hitInfo.surfaceNormal)) / (dot(ray.direction, ray.direction) * dot(hitInfo.surfaceNormal, hitInfo.surfaceNormal));
-			
+		
 			//rayNode[currentNodeIndex].color = hitInfo.color * coeff;
 
 			Material material;
@@ -384,14 +342,13 @@ vec3 iterativeRayTrace(Ray ray)
 
 			if(length(material.ambient) > 0.0 || length(material.diffuse) > 0.0 || length(material.specular) > 0.0 || rayNode[currentNodeIndex].depth >= Max_Depth)
 			{
-				//rayNode[currentNodeIndex].diffuseColor = calculateColor(hitInfo);
-				rayNode[currentNodeIndex].diffuseColor = calculateColor(hitInfo, ray);
+				rayNode[currentNodeIndex].diffuseColor = calculateColor(hitInfo);
 			}
 		}
 		else
 		{
 			//break;
-			rayNode[currentNodeIndex].diffuseColor = vec3(0.0, 0.0, 0.0);
+			rayNode[currentNodeIndex].diffuseColor = vec3(1.0, 0.0, 0.0);
 		}
 		currentNodeIndex++;
 	}
